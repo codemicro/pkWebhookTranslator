@@ -2,7 +2,20 @@ package whtranslate
 
 import "github.com/bwmarrin/discordgo"
 
-func styleEmbed(embed *discordgo.MessageEmbed, action eventAction) {
+// discordEmbed is used to wrap a *discordgo.MessageEmbed with custom methods
+type discordEmbed struct {
+	*discordgo.MessageEmbed
+}
+
+func newDiscordEmbed() *discordEmbed {
+	return &discordEmbed{}
+}
+
+func (de *discordEmbed) getMessageEmbed() *discordgo.MessageEmbed {
+	return de.MessageEmbed
+}
+
+func (de *discordEmbed) setStyle(action eventAction) {
 	var colour int
 	switch action {
 	case actionCreate:
@@ -12,5 +25,5 @@ func styleEmbed(embed *discordgo.MessageEmbed, action eventAction) {
 	case actionDelete:
 		colour = 0xcc3232
 	}
-	embed.Color = colour
+	de.MessageEmbed.Color = colour
 }

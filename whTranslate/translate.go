@@ -17,7 +17,7 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 	}
 
 	var (
-		embed = new(discordgo.MessageEmbed)
+		embed = newDiscordEmbed()
 		err   error
 	)
 
@@ -36,10 +36,10 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		Text: fmt.Sprintf("System ID: %s", event.SystemID),
 	}
 
-	return embed, nil
+	return embed.getMessageEmbed(), nil
 }
 
-func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordgo.MessageEmbed) error {
+func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordEmbed) error {
 
 	var sb strings.Builder
 
@@ -50,7 +50,7 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordg
 	}
 
 	embed.Title = "System updated"
-	styleEmbed(embed, actionUpdate)
+	embed.setStyle(actionUpdate)
 
 	return nil
 }

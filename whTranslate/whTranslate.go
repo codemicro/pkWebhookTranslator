@@ -17,6 +17,7 @@ type DispatchEvent struct {
 	Data         EventData `json:"data,omitempty"`
 }
 
+// EventData holds the data sent by PK in a DispatchEvent
 type EventData map[string]interface{}
 
 func (e EventData) AsString(key string) (string, bool) {

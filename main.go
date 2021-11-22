@@ -10,6 +10,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// This file is meant as a test webhook server
+
 var pkToken = os.Getenv("PK_TOKEN")
 
 func run() error {
