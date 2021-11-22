@@ -23,3 +23,13 @@ const (
 	EventDeleteSwitch EventType = "DELETE_SWITCH"
 	EventDeleteAllSwitches EventType = "DELETE_ALL_SWITCHES"
 )
+
+// eventAction is used for styling embeds
+type eventAction uint8
+
+const (
+	actionUndefined eventAction = iota
+	actionUpdate
+	actionCreate
+	actionDelete
+)
