@@ -1,10 +1,18 @@
 package whtranslate
 
 // Translator performs translation between PluralKit dispatch events and Discord message embeds
-type Translator struct{}
+type Translator struct {
+	options Option
+}
 
-func NewTranslator() *Translator {
-	return &Translator{}
+func NewTranslator(options Option) *Translator {
+	return &Translator{
+		options: options,
+	}
+}
+
+func (t *Translator) ignorePrivacyChanges() bool {
+	return t.options & OptionIgnorePrivacyChanges != 0
 }
 
 // DispatchEvent represents a dispatch event sent by PluralKit
@@ -31,3 +39,10 @@ func (e EventData) AsString(key string) (string, bool) {
 	}
 	return "", false
 }
+
+type Option uint8
+
+const (
+	OptionDefault Option = 0
+	OptionIgnorePrivacyChanges Option = 1 << iota
+)

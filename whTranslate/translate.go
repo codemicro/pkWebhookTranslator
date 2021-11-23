@@ -60,6 +60,18 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		)
 	}
 
+	if tag, ok := event.Data.AsString("tag"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Tag", formatString(tag)),
+		)
+	}
+
+	if tz, ok := event.Data.AsString("timezone"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Timezone", formatString(tz)),
+		)
+	}
+
 	if colour, ok := event.Data.AsString("color"); ok {
 		sb.WriteString(
 			formatUpdateMessage("Colour", "#"+formatString(colour)),
@@ -78,6 +90,24 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 			formatUpdateMessage("Avatar URL", formatString(avatar)),
 		)
 		embed.setImage(avatar)
+	}
+
+	if !t.ignorePrivacyChanges() {
+
+		var x [][2]string
+		for _, key := range []string{"description_privacy", "member_list_privacy", "group_list_privacy", "front_privacy", "front_history_privacy"} {
+			if newValue, ok := event.Data.AsString(key); ok {
+				x = append(x, [2]string{key, newValue})
+			}
+		}
+
+		if len(x) != 0 {
+			sb.WriteString("Privacy settings updated:\n")
+			for _, y := range x {
+				sb.WriteString(fmt.Sprintf(" • `%s` is now `%s`\n", y[0], y[1]))
+			}
+		}
+
 	}
 
 	embed.setContent(sb.String())
