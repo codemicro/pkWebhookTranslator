@@ -26,6 +26,10 @@ func run() error {
 		return errors.New("missing env var PK_TOKEN")
 	}
 
+	if whID == "" || whToken == "" {
+		fmt.Println("Not sending Discord webhooks (WH_ID and/or WH_TOKEN not set)")
+	}
+
 	fmt.Printf("Starting with token %#v\n", pkToken)
 
 	app := fiber.New()
@@ -57,8 +61,9 @@ func run() error {
 		demb, err := trans.TranslateEvent(event)
 		fmt.Printf("Translated content: %#v %v\n", demb, err)
 
-		if whID == "" || whToken == "" {
-			_, err := dgSession.WebhookExecute(whID, whToken, false, &discordgo.WebhookParams{Embeds: []*discordgo.MessageEmbed{demb}})
+		if !(whID == "" || whToken == "") {
+			fmt.Println("Sending WH")
+			_, err := dgSession.WebhookExecute(whID, whToken, true, &discordgo.WebhookParams{Embeds: []*discordgo.MessageEmbed{demb}})
 			if err != nil {
 				fmt.Printf("Webhook send error: %v\n", err)
 			}
