@@ -6,13 +6,19 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bwmarrin/discordgo"
 	whtranslate "github.com/codemicro/pkWebhookTranslator/whTranslate"
 	"github.com/gofiber/fiber/v2"
 )
 
 // This file is meant as a test webhook server
 
-var pkToken = os.Getenv("PK_TOKEN")
+var (
+	pkToken = os.Getenv("PK_TOKEN")
+	// discord webhook info
+	whID = os.Getenv("WH_ID")
+	whToken = os.Getenv("WH_TOKEN")
+)
 
 func run() error {
 
@@ -32,6 +38,7 @@ func run() error {
 	})
 
 	trans := whtranslate.NewTranslator() // haha hehe trans <3
+	dgSession, _ := discordgo.New()
 
 	app.Post("/wh", func(c *fiber.Ctx) error {
 
@@ -49,6 +56,13 @@ func run() error {
 
 		demb, err := trans.TranslateEvent(event)
 		fmt.Printf("Translated content: %#v %v\n", demb, err)
+
+		if whID == "" || whToken == "" {
+			_, err := dgSession.WebhookExecute(whID, whToken, false, &discordgo.WebhookParams{Embeds: []*discordgo.MessageEmbed{demb}})
+			if err != nil {
+				fmt.Printf("Webhook send error: %v\n", err)
+			}
+		}
 
 		c.Status(fiber.StatusNoContent)
 		return nil
