@@ -92,6 +92,7 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		embed.setImage(avatar)
 	}
 
+	// TODO: this is broken
 	if !t.ignorePrivacyChanges() {
 
 		var x [][2]string
