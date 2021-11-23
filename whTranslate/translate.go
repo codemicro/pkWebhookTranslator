@@ -64,7 +64,6 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		sb.WriteString(
 			formatUpdateMessage("Colour", "#"+formatString(colour)),
 		)
-		embed.setImage(formatColourURL(colour))
 	}
 
 	if banner, ok := event.Data.AsString("banner"); ok {
