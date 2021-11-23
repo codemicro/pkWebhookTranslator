@@ -8,7 +8,9 @@ type discordEmbed struct {
 }
 
 func newDiscordEmbed() *discordEmbed {
-	return &discordEmbed{}
+	return &discordEmbed{
+		MessageEmbed: new(discordgo.MessageEmbed),
+	}
 }
 
 func (de *discordEmbed) getMessageEmbed() *discordgo.MessageEmbed {
@@ -26,4 +28,18 @@ func (de *discordEmbed) setStyle(action eventAction) {
 		colour = 0xcc3232
 	}
 	de.MessageEmbed.Color = colour
+}
+
+func (de *discordEmbed) setTitle(title string) {
+	de.MessageEmbed.Title = title
+}
+
+func (de *discordEmbed) setContent(content string) {
+	de.MessageEmbed.Description = content
+}
+
+func (de *discordEmbed) setImage(url string) {
+	de.MessageEmbed.Image = &discordgo.MessageEmbedImage{
+		URL: url,
+	}
 }

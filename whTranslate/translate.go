@@ -22,6 +22,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 	)
 
 	switch event.Type {
+	case EventPing:
+		return nil, nil
 	case EventUpdateSystem:
 		err = t.translateUpdateSystem(event, embed)
 	default:
@@ -41,16 +43,45 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 
 func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordEmbed) error {
 
+	embed.setTitle("System updated")
+	embed.setStyle(actionUpdate)
+
 	var sb strings.Builder
 
 	if name, ok := event.Data.AsString("name"); ok {
 		sb.WriteString(
-			fmt.Sprintf("System name updated: new value `%s`\n", formatString(name)),
+			formatUpdateMessage("Name", formatString(name)),
 		)
 	}
 
-	embed.Title = "System updated"
-	embed.setStyle(actionUpdate)
+	if desc, ok := event.Data.AsString("description"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Description", formatString(desc)),
+		)
+	}
+
+	if colour, ok := event.Data.AsString("color"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Colour", "#"+formatString(colour)),
+		)
+		embed.setImage(formatColourURL(colour))
+	}
+
+	if banner, ok := event.Data.AsString("banner"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Banner URL", formatString(banner)),
+		)
+		embed.setImage(banner)
+	}
+
+	if avatar, ok := event.Data.AsString("avatar_url"); ok {
+		sb.WriteString(
+			formatUpdateMessage("Avatar URL", formatString(avatar)),
+		)
+		embed.setImage(avatar)
+	}
+
+	embed.setContent(sb.String())
 
 	return nil
 }
