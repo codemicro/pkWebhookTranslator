@@ -41,7 +41,7 @@ func run() error {
 		return err
 	})
 
-	trans := whtranslate.NewTranslator(whtranslate.OptionDefault) // haha hehe trans <3
+	trans := whtranslate.NewTranslator() // haha hehe trans <3
 	dgSession, _ := discordgo.New()
 
 	app.Post("/wh", func(c *fiber.Ctx) error {

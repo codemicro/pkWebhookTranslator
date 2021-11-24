@@ -5,14 +5,20 @@ type Translator struct {
 	options Option
 }
 
-func NewTranslator(options Option) *Translator {
+func NewTranslator(options ...Option) *Translator {
+	var o Option
+	// combine multiple options into one value
+	for _, option := range options {
+		o = o | option
+	}
+
 	return &Translator{
-		options: options,
+		options: o,
 	}
 }
 
 func (t *Translator) ignorePrivacyChanges() bool {
-	return t.options & OptionIgnorePrivacyChanges != 0
+	return t.options&OptionIgnorePrivacyChanges != 0
 }
 
 // DispatchEvent represents a dispatch event sent by PluralKit
@@ -43,6 +49,5 @@ func (e EventData) AsString(key string) (string, bool) {
 type Option uint8
 
 const (
-	OptionDefault Option = 0
 	OptionIgnorePrivacyChanges Option = 1 << iota
 )
