@@ -28,6 +28,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		return nil, nil
 	case EventUpdateSystem:
 		err = t.translateUpdateSystem(event, embed)
+	case EventCreateMember:
+		err = t.translateCreateMember(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -154,4 +156,24 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 	embed.setContent(sb.String())
 
 	return nil
+}
+
+func (t *Translator) translateCreateMember(event *DispatchEvent, embed *discordEmbed) error {
+
+    embed.setTitle("Member created")
+    embed.setStyle(actionCreate)
+
+    var data struct {
+        Name string `json:"name"`
+    }
+
+    if err := json.Unmarshal(event.Data, &data); err != nil {
+        return err
+    }
+
+    embed.setContent(
+		formatStatementMessage("Name", formatString(data.Name)),
+	)
+
+    return nil
 }

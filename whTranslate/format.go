@@ -17,3 +17,7 @@ func formatString(x string) string {
 func formatUpdateMessage(fieldName string, newContent string) string {
 	return fmt.Sprintf("%s updated: is now `%s`\n", fieldName, newContent)
 }
+
+func formatStatementMessage(fieldName string, content string) string {
+	return fmt.Sprintf("%s: `%s`\n", fieldName, content)
+}
