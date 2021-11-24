@@ -1,6 +1,7 @@
 package whtranslate
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -23,6 +24,7 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 
 	switch event.Type {
 	case EventPing:
+		// TODO: option to send ping webhooks?
 		return nil, nil
 	case EventUpdateSystem:
 		err = t.translateUpdateSystem(event, embed)
@@ -46,66 +48,104 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 	embed.setTitle("System updated")
 	embed.setStyle(actionUpdate)
 
+	var data struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Tag         string `json:"tag"`
+		Timezone    string `json:"timezone"`
+		Colour      string `json:"color"`
+		Banner      string `json:"banner"`
+		Avatar      string `json:"avatar_url"`
+		Privacy     struct {
+			Description  string `json:"description_privacy"`
+			MemberList   string `json:"member_list_privacy"`
+			GroupList    string `json:"group_list_privacy"`
+			Front        string `json:"front_privacy"`
+			FrontHistory string `json:"front_history_privacy"`
+		} `json:"privacy"`
+	}
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+        return err
+    }
+
 	var sb strings.Builder
 
-	if name, ok := event.Data.AsString("name"); ok {
+	if data.Name != "" {
 		sb.WriteString(
-			formatUpdateMessage("Name", formatString(name)),
+			formatUpdateMessage("Name", formatString(data.Name)),
 		)
 	}
 
-	if desc, ok := event.Data.AsString("description"); ok {
+	if data.Description != "" {
 		sb.WriteString(
-			formatUpdateMessage("Description", formatString(desc)),
+			formatUpdateMessage("Description", formatString(data.Description)),
 		)
 	}
 
-	if tag, ok := event.Data.AsString("tag"); ok {
+	if data.Tag != "" {
 		sb.WriteString(
-			formatUpdateMessage("Tag", formatString(tag)),
+			formatUpdateMessage("Tag", formatString(data.Tag)),
 		)
 	}
 
-	if tz, ok := event.Data.AsString("timezone"); ok {
+	if data.Timezone != "" {
 		sb.WriteString(
-			formatUpdateMessage("Timezone", formatString(tz)),
+			formatUpdateMessage("Timezone", formatString(data.Timezone)),
 		)
 	}
 
-	if colour, ok := event.Data.AsString("color"); ok {
+	if data.Colour != "" {
 		sb.WriteString(
-			formatUpdateMessage("Colour", "#"+formatString(colour)),
+			formatUpdateMessage("Colour", "#"+formatString(data.Colour)),
 		)
 	}
 
-	if banner, ok := event.Data.AsString("banner"); ok {
+	if data.Banner != "" {
 		sb.WriteString(
-			formatUpdateMessage("Banner URL", formatString(banner)),
+			formatUpdateMessage("Banner URL", formatString(data.Banner)),
 		)
-		embed.setImage(banner)
+		embed.setImage(data.Banner)
 	}
 
-	if avatar, ok := event.Data.AsString("avatar_url"); ok {
+	if data.Avatar != "" {
 		sb.WriteString(
-			formatUpdateMessage("Avatar URL", formatString(avatar)),
+			formatUpdateMessage("Avatar URL", formatString(data.Avatar)),
 		)
-		embed.setImage(avatar)
+		embed.setImage(data.Avatar)
 	}
 
-	// TODO: this is broken
 	if !t.ignorePrivacyChanges() {
 
-		var x [][2]string
-		for _, key := range []string{"description_privacy", "member_list_privacy", "group_list_privacy", "front_privacy", "front_history_privacy"} {
-			if newValue, ok := event.Data.AsString(key); ok {
-				x = append(x, [2]string{key, newValue})
-			}
+		var (
+			privacy = &data.Privacy
+			x [][2]string
+		)
+
+		if privacy.Description != "" {
+			x = append(x, [2]string{"Description", privacy.Description})
+        }
+
+		if privacy.MemberList != "" {
+			x = append(x, [2]string{"Member list", privacy.MemberList})
+		}
+
+		if privacy.GroupList != "" {
+			x = append(x, [2]string{"Group list", privacy.GroupList})
+		}
+
+		if privacy.Front != "" {
+			x = append(x, [2]string{"Front", privacy.Front})
+		}
+
+		if privacy.FrontHistory != "" {
+			x = append(x, [2]string{"Front history", privacy.FrontHistory})
 		}
 
 		if len(x) != 0 {
 			sb.WriteString("Privacy settings updated:\n")
 			for _, y := range x {
-				sb.WriteString(fmt.Sprintf(" • `%s` is now `%s`\n", y[0], y[1]))
+				sb.WriteString(fmt.Sprintf(" • %s is now `%s`\n", y[0], y[1]))
 			}
 		}
 
