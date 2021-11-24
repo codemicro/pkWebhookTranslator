@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
-
 	"github.com/bwmarrin/discordgo"
+	"strings"
 )
 
 var ErrNoType = errors.New("whTranslate: event has no recognised type")
@@ -68,8 +67,8 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
-        return err
-    }
+		return err
+	}
 
 	var sb strings.Builder
 
@@ -121,12 +120,12 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 
 		var (
 			privacy = &data.Privacy
-			x [][2]string
+			x       [][2]string
 		)
 
 		if privacy.Description != "" {
 			x = append(x, [2]string{"Description", privacy.Description})
-        }
+		}
 
 		if privacy.MemberList != "" {
 			x = append(x, [2]string{"Member list", privacy.MemberList})
@@ -160,20 +159,55 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 
 func (t *Translator) translateCreateMember(event *DispatchEvent, embed *discordEmbed) error {
 
-    embed.setTitle("Member created")
-    embed.setStyle(actionCreate)
+	embed.setTitle("Member created")
+	embed.setStyle(actionCreate)
 
-    var data struct {
-        Name string `json:"name"`
-    }
+	var data struct {
+		Name string `json:"name"`
+	}
 
-    if err := json.Unmarshal(event.Data, &data); err != nil {
-        return err
-    }
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
 
-    embed.setContent(
+	embed.setContent(
 		formatStatementMessage("Name", formatString(data.Name)),
 	)
 
-    return nil
+	return nil
+}
+
+func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Member updated")
+	embed.setStyle(actionUpdate)
+
+	var data struct {
+		Name        string `json:"name"`
+		DisplayName string `json:"display_name"`
+		Colour      string `json:"color"`
+		Birthday    string `json:"birthday"`
+		Pronouns    string `json:"pronouns"`
+		Avatar      string `json:"avatar_url"`
+		Banner      string `json:"banner"`
+		Description string `json:"description"`
+		KeepProxy   bool   `json:"keep_proxy"`
+		Privacy     struct {
+			Visibility  string `json:"visibility"`
+			Name        string `json:"name_privacy"`
+			Description string `json:"description_privacy"`
+			Birthday    string `json:"birthday_privacy"`
+			Pronoun     string `json:"pronoun_privacy"`
+			Avatar      string `json:"avatar_privacy"`
+			Metadata    string `json:"metadata_privacy"`
+		} `json:"privacy"`
+	}
+
+	// TODO: This.
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
+
+	return nil
 }
