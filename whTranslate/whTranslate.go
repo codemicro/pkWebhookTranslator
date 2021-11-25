@@ -18,3 +18,18 @@ type DispatchEvent struct {
 	GuildID      string          `json:"guild_id,omitempty"`
 	Data         json.RawMessage `json:"data,omitempty"`
 }
+
+// privacy represents all known privacy fields used in models used in webhooks
+type privacy struct {
+	Name         string `json:"name_privacy"`
+	Description  string `json:"description_privacy"`
+	Avatar       string `json:"avatar_privacy"`
+	MemberList   string `json:"member_list_privacy"`
+	GroupList    string `json:"group_list_privacy"`
+	Front        string `json:"front_privacy"`
+	FrontHistory string `json:"front_history_privacy"`
+	Visibility   string `json:"visibility"`
+	Birthday     string `json:"birthday_privacy"`
+	Pronoun      string `json:"pronoun_privacy"`
+	Metadata     string `json:"metadata_privacy"`
+}

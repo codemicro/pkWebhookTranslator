@@ -42,6 +42,10 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		Text: fmt.Sprintf("System ID: %s", event.SystemID),
 	}
 
+	if event.ID != "" {
+		embed.Footer.Text += fmt.Sprintf("\nEntity ID: %s", event.ID)
+	}
+
 	return embed.getMessageEmbed(), nil
 }
 
@@ -58,13 +62,7 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		Colour      string `json:"color" prefix:"#"`
 		Banner      string `json:"banner"`
 		Avatar      string `json:"avatar_url" readable:"Avatar"`
-		Privacy     struct {
-			Description  string `json:"description_privacy"`
-			MemberList   string `json:"member_list_privacy"`
-			GroupList    string `json:"group_list_privacy"`
-			Front        string `json:"front_privacy"`
-			FrontHistory string `json:"front_history_privacy"`
-		} `json:"privacy"`
+		Privacy     privacy `json:"privacy"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -122,15 +120,7 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 		Banner      string `json:"banner"`
 		Description string `json:"description"`
 		KeepProxy   *bool   `json:"keep_proxy"`
-		Privacy     struct {
-			Visibility  string `json:"visibility"`
-			Name        string `json:"name_privacy"`
-			Description string `json:"description_privacy"`
-			Birthday    string `json:"birthday_privacy"`
-			Pronoun     string `json:"pronoun_privacy"`
-			Avatar      string `json:"avatar_privacy"`
-			Metadata    string `json:"metadata_privacy"`
-		} `json:"privacy"`
+		Privacy     privacy `json:"privacy"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
