@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"strings"
 )
 
 var ErrNoType = errors.New("whTranslate: event has no recognised type")
@@ -29,6 +28,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateUpdateSystem(event, embed)
 	case EventCreateMember:
 		err = t.translateCreateMember(event, embed)
+	case EventUpdateMember:
+		err = t.translateUpdateMember(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -54,9 +55,9 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		Description string `json:"description"`
 		Tag         string `json:"tag"`
 		Timezone    string `json:"timezone"`
-		Colour      string `json:"color"`
+		Colour      string `json:"color" prefix:"#"`
 		Banner      string `json:"banner"`
-		Avatar      string `json:"avatar_url"`
+		Avatar      string `json:"avatar_url" readable:"Avatar"`
 		Privacy     struct {
 			Description  string `json:"description_privacy"`
 			MemberList   string `json:"member_list_privacy"`
@@ -70,89 +71,18 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		return err
 	}
 
-	var sb strings.Builder
-
-	if data.Name != "" {
-		sb.WriteString(
-			formatUpdateMessage("Name", formatString(data.Name)),
-		)
+	c, err := structToString(data)
+	if err != nil {
+		return err
 	}
 
-	if data.Description != "" {
-		sb.WriteString(
-			formatUpdateMessage("Description", formatString(data.Description)),
-		)
-	}
-
-	if data.Tag != "" {
-		sb.WriteString(
-			formatUpdateMessage("Tag", formatString(data.Tag)),
-		)
-	}
-
-	if data.Timezone != "" {
-		sb.WriteString(
-			formatUpdateMessage("Timezone", formatString(data.Timezone)),
-		)
-	}
-
-	if data.Colour != "" {
-		sb.WriteString(
-			formatUpdateMessage("Colour", "#"+formatString(data.Colour)),
-		)
-	}
-
-	if data.Banner != "" {
-		sb.WriteString(
-			formatUpdateMessage("Banner URL", formatString(data.Banner)),
-		)
-		embed.setImage(data.Banner)
-	}
+	embed.setContent(c)
 
 	if data.Avatar != "" {
-		sb.WriteString(
-			formatUpdateMessage("Avatar URL", formatString(data.Avatar)),
-		)
 		embed.setImage(data.Avatar)
+	} else if data.Banner != "" {
+		embed.setImage(data.Banner)
 	}
-
-	if !t.ignorePrivacyChanges() {
-
-		var (
-			privacy = &data.Privacy
-			x       [][2]string
-		)
-
-		if privacy.Description != "" {
-			x = append(x, [2]string{"Description", privacy.Description})
-		}
-
-		if privacy.MemberList != "" {
-			x = append(x, [2]string{"Member list", privacy.MemberList})
-		}
-
-		if privacy.GroupList != "" {
-			x = append(x, [2]string{"Group list", privacy.GroupList})
-		}
-
-		if privacy.Front != "" {
-			x = append(x, [2]string{"Front", privacy.Front})
-		}
-
-		if privacy.FrontHistory != "" {
-			x = append(x, [2]string{"Front history", privacy.FrontHistory})
-		}
-
-		if len(x) != 0 {
-			sb.WriteString("Privacy settings updated:\n")
-			for _, y := range x {
-				sb.WriteString(fmt.Sprintf(" • %s is now `%s`\n", y[0], y[1]))
-			}
-		}
-
-	}
-
-	embed.setContent(sb.String())
 
 	return nil
 }
@@ -185,13 +115,13 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 	var data struct {
 		Name        string `json:"name"`
 		DisplayName string `json:"display_name"`
-		Colour      string `json:"color"`
+		Colour      string `json:"color" prefix:"#"`
 		Birthday    string `json:"birthday"`
 		Pronouns    string `json:"pronouns"`
-		Avatar      string `json:"avatar_url"`
+		Avatar      string `json:"avatar_url" readable:"Avatar"`
 		Banner      string `json:"banner"`
 		Description string `json:"description"`
-		KeepProxy   bool   `json:"keep_proxy"`
+		KeepProxy   *bool   `json:"keep_proxy"`
 		Privacy     struct {
 			Visibility  string `json:"visibility"`
 			Name        string `json:"name_privacy"`
@@ -203,10 +133,21 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 		} `json:"privacy"`
 	}
 
-	// TODO: This.
-
 	if err := json.Unmarshal(event.Data, &data); err != nil {
 		return err
+	}
+
+	c, err := structToString(data)
+	if err != nil {
+		return err
+	}
+
+	embed.setContent(c)
+
+	if data.Avatar != "" {
+		embed.setImage(data.Avatar)
+	} else if data.Banner != "" {
+		embed.setImage(data.Banner)
 	}
 
 	return nil
