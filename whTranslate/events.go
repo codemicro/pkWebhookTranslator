@@ -22,6 +22,7 @@ const (
 	EventUpdateSwitchMembers EventType = "UPDATE_SWITCH_MEMBERS"
 	EventDeleteSwitch        EventType = "DELETE_SWITCH"
 	EventDeleteAllSwitches   EventType = "DELETE_ALL_SWITCHES"
+	EventSuccessfulImport    EventType = "SUCCESSFUL_IMPORT"
 )
 
 // eventAction is used for styling embeds
