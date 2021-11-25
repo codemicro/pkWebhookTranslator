@@ -30,6 +30,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateCreateMember(event, embed)
 	case EventUpdateMember:
 		err = t.translateUpdateMember(event, embed)
+	case EventDeleteMember:
+		err = t.translateDeleteMember(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -139,6 +141,14 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 	} else if data.Banner != "" {
 		embed.setImage(data.Banner)
 	}
+
+	return nil
+}
+
+func (t *Translator) translateDeleteMember(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Member deleted")
+	embed.setStyle(actionDelete)
 
 	return nil
 }
