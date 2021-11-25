@@ -24,8 +24,10 @@ type privacy struct {
 	Name         string `json:"name_privacy"`
 	Description  string `json:"description_privacy"`
 	Avatar       string `json:"avatar_privacy"`
+	Icon         string `json:"icon_privacy"`
 	MemberList   string `json:"member_list_privacy"`
 	GroupList    string `json:"group_list_privacy"`
+	List         string `json:"list_privacy"`
 	Front        string `json:"front_privacy"`
 	FrontHistory string `json:"front_history_privacy"`
 	Visibility   string `json:"visibility"`

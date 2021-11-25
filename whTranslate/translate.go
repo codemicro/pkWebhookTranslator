@@ -32,6 +32,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateUpdateMember(event, embed)
 	case EventDeleteMember:
 		err = t.translateDeleteMember(event, embed)
+	case EventCreateGroup:
+		err = t.translateCreateGroup(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -149,6 +151,41 @@ func (t *Translator) translateDeleteMember(event *DispatchEvent, embed *discordE
 
 	embed.setTitle("Member deleted")
 	embed.setStyle(actionDelete)
+
+	return nil
+}
+
+func (t *Translator) translateCreateGroup(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Group created")
+	embed.setStyle(actionCreate)
+
+	var data struct {
+		Name        string `json:"name"`
+		DisplayName string `json:"display_name"`
+		Description string `json:"description"`
+		Icon      string `json:"icon"`
+		Banner      string `json:"banner"`
+		Colour      string `json:"color" prefix:"#"`
+		Privacy     privacy `json:"privacy"`
+	}
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
+
+	c, err := structToString(data)
+	if err != nil {
+		return err
+	}
+
+	embed.setContent(c)
+
+	if data.Icon != "" {
+		embed.setImage(data.Icon)
+	} else if data.Banner != "" {
+		embed.setImage(data.Banner)
+	}
 
 	return nil
 }
