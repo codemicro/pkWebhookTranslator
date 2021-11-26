@@ -1,3 +1,10 @@
+/*
+ *  pkWebhookTranslate, https://github.com/codemicro/pkWebhookTranslate
+ *  Copyright (c) 2021 codemicro and contributors
+ *
+ *  SPDX-License-Identifier: BSD-2-Clause
+ */
+
 package whtranslate
 
 import (

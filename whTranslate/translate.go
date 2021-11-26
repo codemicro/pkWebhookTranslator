@@ -1,3 +1,10 @@
+/*
+ *  pkWebhookTranslate, https://github.com/codemicro/pkWebhookTranslate
+ *  Copyright (c) 2021 codemicro and contributors
+ *
+ *  SPDX-License-Identifier: BSD-2-Clause
+ */
+
 package whtranslate
 
 import (
@@ -329,7 +336,7 @@ func (t *Translator) translateCreateMessage(event *DispatchEvent, embed *discord
 	embed.setStyle(actionCreate)
 
 	var data struct {
-		Timestamp *time.Time      `json:"timestamp" readable:"Time"`
+		Timestamp *time.Time     `json:"timestamp" readable:"Time"`
 		ID        nullableString `json:"id" readable:"New message ID"`
 		Original  nullableString `json:"original" readable:"Original message ID"`
 		Sender    nullableString `json:"sender" readable:"Discord account ID"`
@@ -421,10 +428,10 @@ func (t *Translator) translateDeleteSwitch(event *DispatchEvent, embed *discordE
 
 func (t *Translator) translateDeleteAllSwitches(event *DispatchEvent, embed *discordEmbed) error {
 
-    embed.setTitle("All switches deleted")
-    embed.setStyle(actionDelete)
+	embed.setTitle("All switches deleted")
+	embed.setStyle(actionDelete)
 
-    return nil
+	return nil
 }
 
 func (t *Translator) translateImportSuccess(event *DispatchEvent, embed *discordEmbed) error {

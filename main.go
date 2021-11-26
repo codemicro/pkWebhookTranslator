@@ -1,14 +1,20 @@
+/*
+ *  pkWebhookTranslate, https://github.com/codemicro/pkWebhookTranslate
+ *  Copyright (c) 2021 codemicro and contributors
+ *
+ *  SPDX-License-Identifier: BSD-2-Clause
+ */
+
 package main
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-
 	"github.com/bwmarrin/discordgo"
 	whtranslate "github.com/codemicro/pkWebhookTranslator/whTranslate"
 	"github.com/gofiber/fiber/v2"
+	"os"
 )
 
 // Test webhook server implementation
@@ -16,8 +22,8 @@ import (
 var (
 	pkToken = os.Getenv("PK_TOKEN")
 	// discord webhook info
-	whID = os.Getenv("WH_ID")
-	whToken = os.Getenv("WH_TOKEN")
+	whID          = os.Getenv("WH_ID")
+	whToken       = os.Getenv("WH_TOKEN")
 	serverAddress = os.Getenv("SERVER_ADDR")
 )
 
