@@ -1,3 +1,5 @@
+//+build example
+
 /*
  *  pkWebhookTranslate, https://github.com/codemicro/pkWebhookTranslate
  *  Copyright (c) 2021 codemicro and contributors
