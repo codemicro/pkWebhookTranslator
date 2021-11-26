@@ -39,6 +39,10 @@ func (de *discordEmbed) setContent(content string) {
 }
 
 func (de *discordEmbed) setImage(url string) {
+	if url == "" {
+		return
+	}
+
 	de.MessageEmbed.Image = &discordgo.MessageEmbedImage{
 		URL: url,
 	}

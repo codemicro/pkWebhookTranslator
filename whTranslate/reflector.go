@@ -31,14 +31,18 @@ func structToString(s interface{}) (string, error) {
     for i := 0; i < ct.NumField(); i += 1 {
 
         // deal with nested privacy structs
-        if field := ctv.Field(i); field.Type().Kind() == reflect.Struct {
-            x, err := structToString(field.Interface())
-            if err != nil {
-                return "", err
+        {
+            field := ctv.Field(i)
+            if p, ok := field.Interface().(privacy); ok {
+                x, err := structToString(p)
+                if err != nil {
+                    return "", err
+                }
+                sb.WriteString(x)
+                continue
             }
-            sb.WriteString(x)
-            continue
         }
+
 
         field := ct.Field(i)
         readableName := field.Tag.Get("readable")
@@ -53,9 +57,9 @@ func structToString(s interface{}) (string, error) {
 
         var formatted string
         switch x := value.(type) {
-        case string:
-            if x != "" {
-                formatted = formatString(x)
+        case nullableString:
+            if x.HasValue {
+                formatted = formatString(x.Value)
             }
         case *bool:
             if x != nil {

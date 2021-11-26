@@ -78,14 +78,14 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 	embed.setStyle(actionUpdate)
 
 	var data struct {
-		Name        string  `json:"name"`
-		Description string  `json:"description"`
-		Tag         string  `json:"tag"`
-		Timezone    string  `json:"timezone"`
-		Colour      string  `json:"color" prefix:"#"`
-		Banner      string  `json:"banner"`
-		Avatar      string  `json:"avatar_url" readable:"Avatar"`
-		Privacy     privacy `json:"privacy"`
+		Name        nullableString `json:"name"`
+		Description nullableString `json:"description"`
+		Tag         nullableString `json:"tag"`
+		Timezone    nullableString `json:"timezone"`
+		Colour      nullableString `json:"color" prefix:"#"`
+		Banner      nullableString `json:"banner"`
+		Avatar      nullableString `json:"avatar_url" readable:"Avatar"`
+		Privacy     privacy        `json:"privacy"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -99,10 +99,10 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 
 	embed.setContent(c)
 
-	if data.Avatar != "" {
-		embed.setImage(data.Avatar)
-	} else if data.Banner != "" {
-		embed.setImage(data.Banner)
+	if data.Avatar.HasValue {
+		embed.setImage(data.Avatar.Value)
+	} else if data.Banner.HasValue {
+		embed.setImage(data.Banner.Value)
 	}
 
 	return nil
@@ -114,7 +114,7 @@ func (t *Translator) translateCreateMember(event *DispatchEvent, embed *discordE
 	embed.setStyle(actionCreate)
 
 	var data struct {
-		Name string `json:"name"`
+		Name nullableString `json:"name"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -122,7 +122,7 @@ func (t *Translator) translateCreateMember(event *DispatchEvent, embed *discordE
 	}
 
 	embed.setContent(
-		formatStatementMessage("Name", formatString(data.Name)),
+		formatStatementMessage("Name", formatString(data.Name.Value)),
 	)
 
 	return nil
@@ -134,16 +134,16 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 	embed.setStyle(actionUpdate)
 
 	var data struct {
-		Name        string  `json:"name"`
-		DisplayName string  `json:"display_name"`
-		Colour      string  `json:"color" prefix:"#"`
-		Birthday    string  `json:"birthday"`
-		Pronouns    string  `json:"pronouns"`
-		Avatar      string  `json:"avatar_url" readable:"Avatar"`
-		Banner      string  `json:"banner"`
-		Description string  `json:"description"`
-		KeepProxy   *bool   `json:"keep_proxy"`
-		Privacy     privacy `json:"privacy"`
+		Name        nullableString `json:"name"`
+		DisplayName nullableString `json:"display_name"`
+		Colour      nullableString `json:"color" prefix:"#"`
+		Birthday    nullableString `json:"birthday"`
+		Pronouns    nullableString `json:"pronouns"`
+		Avatar      nullableString `json:"avatar_url" readable:"Avatar"`
+		Banner      nullableString `json:"banner"`
+		Description nullableString `json:"description"`
+		KeepProxy   *bool          `json:"keep_proxy"`
+		Privacy     privacy        `json:"privacy"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -157,10 +157,10 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 
 	embed.setContent(c)
 
-	if data.Avatar != "" {
-		embed.setImage(data.Avatar)
-	} else if data.Banner != "" {
-		embed.setImage(data.Banner)
+	if data.Avatar.HasValue {
+		embed.setImage(data.Avatar.Value)
+	} else if data.Banner.HasValue {
+		embed.setImage(data.Banner.Value)
 	}
 
 	return nil
@@ -180,7 +180,7 @@ func (t *Translator) translateCreateGroup(event *DispatchEvent, embed *discordEm
 	embed.setStyle(actionCreate)
 
 	var data struct {
-		Name string `json:"name"`
+		Name nullableString `json:"name"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -188,7 +188,7 @@ func (t *Translator) translateCreateGroup(event *DispatchEvent, embed *discordEm
 	}
 
 	embed.setContent(
-		formatStatementMessage("Name", formatString(data.Name)),
+		formatStatementMessage("Name", formatString(data.Name.Value)),
 	)
 
 	return nil
@@ -200,13 +200,13 @@ func (t *Translator) translateUpdateGroup(event *DispatchEvent, embed *discordEm
 	embed.setStyle(actionCreate)
 
 	var data struct {
-		Name        string  `json:"name"`
-		DisplayName string  `json:"display_name"`
-		Description string  `json:"description"`
-		Icon        string  `json:"icon"`
-		Banner      string  `json:"banner"`
-		Colour      string  `json:"color" prefix:"#"`
-		Privacy     privacy `json:"privacy"`
+		Name        nullableString `json:"name"`
+		DisplayName nullableString `json:"display_name"`
+		Description nullableString `json:"description"`
+		Icon        nullableString `json:"icon"`
+		Banner      nullableString `json:"banner"`
+		Colour      nullableString `json:"color" prefix:"#"`
+		Privacy     privacy        `json:"privacy"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -220,10 +220,10 @@ func (t *Translator) translateUpdateGroup(event *DispatchEvent, embed *discordEm
 
 	embed.setContent(c)
 
-	if data.Icon != "" {
-		embed.setImage(data.Icon)
-	} else if data.Banner != "" {
-		embed.setImage(data.Banner)
+	if data.Icon.HasValue {
+		embed.setImage(data.Icon.Value)
+	} else if data.Banner.HasValue {
+		embed.setImage(data.Banner.Value)
 	}
 
 	return nil
@@ -259,11 +259,11 @@ func (t *Translator) translateUpdateSystemGuild(event *DispatchEvent, embed *dis
 	embed.setStyle(actionUpdate)
 
 	var data struct {
-		ProxyingEnabled *bool   `json:"proxying_enabled"`
-		AutoproxyMode   string `json:"autoproxy_mode"`
-		AutoproxyMember string `json:"autoproxy_member"`
-		Tag             string `json:"tag"`
-		TagEnabled      *bool   `json:"tag_enabled"`
+		ProxyingEnabled *bool          `json:"proxying_enabled"`
+		AutoproxyMode   nullableString `json:"autoproxy_mode"`
+		AutoproxyMember nullableString `json:"autoproxy_member"`
+		Tag             nullableString `json:"tag"`
+		TagEnabled      *bool          `json:"tag_enabled"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -286,8 +286,8 @@ func (t *Translator) translateUpdateMemberGuild(event *DispatchEvent, embed *dis
 	embed.setStyle(actionUpdate)
 
 	var data struct {
-		DisplayName string `json:"display_name"`
-		Avatar string `json:"avatar_url" readable:"Avatar"`
+		DisplayName nullableString `json:"display_name"`
+		Avatar      nullableString `json:"avatar_url" readable:"Avatar"`
 	}
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
@@ -301,8 +301,8 @@ func (t *Translator) translateUpdateMemberGuild(event *DispatchEvent, embed *dis
 
 	embed.setContent(c)
 
-	if data.Avatar != "" {
-		embed.setImage(data.Avatar)
+	if data.Avatar.HasValue {
+		embed.setImage(data.Avatar.Value)
 	}
 
 	return nil
