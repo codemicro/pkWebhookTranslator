@@ -82,6 +82,10 @@ func structToString(s interface{}, useStatementFormat bool) (string, error) {
             if x != nil {
                 formatted = formatTime(*x)
             }
+        case []string:
+            if len(x) != 0 {
+                formatted = formatStringSlice(x)
+            }
         }
 
         if formatted != "" {

@@ -30,6 +30,13 @@ func formatTime(x time.Time) string {
 	return x.Format(time.RFC1123)
 }
 
+func formatStringSlice(x []string) string {
+	for i, y := range x {
+		x[i] = formatString(y)
+	}
+	return fmt.Sprintf("[%s]", strings.Join(x, ", "))
+}
+
 func formatUpdateMessage(fieldName string, newContent string) string {
 	return fmt.Sprintf("%s updated: is now `%s`\n", fieldName, newContent)
 }
