@@ -3,6 +3,7 @@ package whtranslate
 import (
 	"fmt"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -23,6 +24,10 @@ func formatBool(x bool) string {
 		return "true"
 	}
 	return "false"
+}
+
+func formatTime(x time.Time) string {
+	return x.Format(time.RFC1123)
 }
 
 func formatUpdateMessage(fieldName string, newContent string) string {

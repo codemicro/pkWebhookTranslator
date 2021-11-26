@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"time"
 )
 
 var ErrNoType = errors.New("whTranslate: event has no recognised type")
@@ -49,6 +50,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateUpdateSystemGuild(event, embed)
 	case EventUpdateMemberGuild:
 		err = t.translateUpdateMemberGuild(event, embed)
+	case EventCreateMessage:
+		err = t.translateCreateMessage(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -92,7 +95,7 @@ func (t *Translator) translateUpdateSystem(event *DispatchEvent, embed *discordE
 		return err
 	}
 
-	c, err := structToString(data)
+	c, err := structToString(data, false)
 	if err != nil {
 		return err
 	}
@@ -150,7 +153,7 @@ func (t *Translator) translateUpdateMember(event *DispatchEvent, embed *discordE
 		return err
 	}
 
-	c, err := structToString(data)
+	c, err := structToString(data, false)
 	if err != nil {
 		return err
 	}
@@ -213,7 +216,7 @@ func (t *Translator) translateUpdateGroup(event *DispatchEvent, embed *discordEm
 		return err
 	}
 
-	c, err := structToString(data)
+	c, err := structToString(data, false)
 	if err != nil {
 		return err
 	}
@@ -270,7 +273,7 @@ func (t *Translator) translateUpdateSystemGuild(event *DispatchEvent, embed *dis
 		return err
 	}
 
-	c, err := structToString(data)
+	c, err := structToString(data, false)
 	if err != nil {
 		return err
 	}
@@ -294,7 +297,7 @@ func (t *Translator) translateUpdateMemberGuild(event *DispatchEvent, embed *dis
 		return err
 	}
 
-	c, err := structToString(data)
+	c, err := structToString(data, false)
 	if err != nil {
 		return err
 	}
@@ -304,6 +307,34 @@ func (t *Translator) translateUpdateMemberGuild(event *DispatchEvent, embed *dis
 	if data.Avatar.HasValue {
 		embed.setImage(data.Avatar.Value)
 	}
+
+	return nil
+}
+
+func (t *Translator) translateCreateMessage(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Message created")
+	embed.setStyle(actionCreate)
+
+	var data struct {
+		Timestamp *time.Time      `json:"timestamp" readable:"Time"`
+		ID        nullableString `json:"id" readable:"New message ID"`
+		Original  nullableString `json:"original" readable:"Original message ID"`
+		Sender    nullableString `json:"sender" readable:"Discord account ID"`
+		Channel   nullableString `json:"channel" readable:"Channel ID"`
+		Member    nullableString `json:"member" readable:"Member ID"`
+	}
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
+
+	c, err := structToString(data, true)
+	if err != nil {
+		return err
+	}
+
+	embed.setContent(c)
 
 	return nil
 }
