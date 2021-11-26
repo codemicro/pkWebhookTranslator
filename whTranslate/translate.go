@@ -54,6 +54,10 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateCreateMessage(event, embed)
 	case EventCreateSwitch:
 		err = t.translateCreateSwitch(event, embed)
+	case EventUpdateSwitch:
+		err = t.translateUpdateSwitch(event, embed)
+	case EventUpdateSwitchMembers:
+		err = t.translateUpdateSwitchMembers(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -346,11 +350,7 @@ func (t *Translator) translateCreateSwitch(event *DispatchEvent, embed *discordE
 	embed.setTitle("Switch created")
 	embed.setStyle(actionCreate)
 
-	var data struct {
-		ID nullableString `json:"id" readable:"ID"`
-		Timestamp *time.Time `json:"timestamp" readable:"time"`
-		Members []string `json:"members" readable:"Member IDs"`
-	}
+	var data switchModel
 
 	if err := json.Unmarshal(event.Data, &data); err != nil {
 		return err
@@ -362,6 +362,45 @@ func (t *Translator) translateCreateSwitch(event *DispatchEvent, embed *discordE
 	}
 
 	embed.setContent(c)
+
+	return nil
+}
+
+func (t *Translator) translateUpdateSwitch(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Switch updated")
+	embed.setStyle(actionUpdate)
+
+	var data switchModel
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
+
+	c, err := structToString(data, false)
+	if err != nil {
+		return err
+	}
+
+	embed.setContent(c)
+
+	return nil
+}
+
+func (t *Translator) translateUpdateSwitchMembers(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Switch members updated")
+	embed.setStyle(actionUpdate)
+
+	var data []string
+
+	if err := json.Unmarshal(event.Data, &data); err != nil {
+		return err
+	}
+
+	embed.setContent(
+		formatStatementMessage("Member IDs", formatStringSlice(data)),
+	)
 
 	return nil
 }

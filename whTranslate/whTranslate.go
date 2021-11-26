@@ -1,6 +1,9 @@
 package whtranslate
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 // Translator performs translation between PluralKit dispatch events and Discord message embeds
 type Translator struct{}
@@ -34,4 +37,11 @@ type privacy struct {
 	Birthday     string `json:"birthday_privacy"`
 	Pronoun      string `json:"pronoun_privacy"`
 	Metadata     string `json:"metadata_privacy"`
+}
+
+// switchModel represents a switch model from the PluralKit API.
+type switchModel struct {
+	ID        nullableString `json:"id" readable:"ID"`
+	Timestamp *time.Time     `json:"timestamp" readable:"time"`
+	Members   []string       `json:"members" readable:"Member IDs"`
 }
