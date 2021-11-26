@@ -79,11 +79,7 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 	if event.ID != "" {
 		embed.Footer.Text += fmt.Sprintf("\nEntity ID: %s", event.ID)
 	}
-
-	if event.GuildID != "" {
-		embed.Footer.Text += fmt.Sprintf("\nGuild ID: %s", event.GuildID)
-	}
-
+	
 	return embed.getMessageEmbed(), nil
 }
 
@@ -301,6 +297,7 @@ func (t *Translator) translateUpdateMemberGuild(event *DispatchEvent, embed *dis
 	embed.setStyle(actionUpdate)
 
 	var data struct {
+		GuildID     nullableString `json:"guild_id" readable:"Guild ID"`
 		DisplayName nullableString `json:"display_name"`
 		Avatar      nullableString `json:"avatar_url" readable:"Avatar"`
 	}
