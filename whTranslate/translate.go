@@ -36,6 +36,15 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateCreateGroup(event, embed)
 	case EventUpdateGroup:
         err = t.translateUpdateGroup(event, embed)
+	case EventUpdateGroupMembers:
+		// TODO: inop
+		return nil, nil
+	case EventDeleteGroup:
+		err = t.translateDeleteGroup(event, embed)
+	case EventLinkAccount:
+		err = t.translateLinkAccount(event, embed)
+	case EventUnlinkAccount:
+		err = t.translateUnlinkAccount(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -210,4 +219,29 @@ func (t *Translator) translateUpdateGroup(event *DispatchEvent, embed *discordEm
 	}
 
 	return nil
+}
+
+func (t *Translator) translateDeleteGroup(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Group deleted")
+	embed.setStyle(actionDelete)
+
+	return nil
+}
+
+func (t *Translator) translateLinkAccount(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Discord account linked")
+	embed.setStyle(actionCreate)
+
+	return nil
+}
+
+func (t *Translator) translateUnlinkAccount(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Discord account unlinked")
+	embed.setStyle(actionDelete)
+
+	return nil
+
 }
