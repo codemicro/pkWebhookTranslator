@@ -11,13 +11,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// This file is meant as a test webhook server
+// Test webhook server implementation
 
 var (
 	pkToken = os.Getenv("PK_TOKEN")
 	// discord webhook info
 	whID = os.Getenv("WH_ID")
 	whToken = os.Getenv("WH_TOKEN")
+	serverAddress = os.Getenv("SERVER_ADDR")
 )
 
 func run() error {
@@ -26,8 +27,14 @@ func run() error {
 		return errors.New("missing env var PK_TOKEN")
 	}
 
+	if serverAddress == "" {
+		serverAddress = "127.0.0.1:8080"
+	}
+
 	if whID == "" || whToken == "" {
 		fmt.Println("Not sending Discord webhooks (WH_ID and/or WH_TOKEN not set)")
+	} else {
+		fmt.Printf("Starting with Discord webhook ID %#v\n", whID)
 	}
 
 	fmt.Printf("Starting with token %#v\n", pkToken)
@@ -51,7 +58,7 @@ func run() error {
 		if err := json.Unmarshal(c.Body(), event); err != nil {
 			fmt.Println("Body unmarshal error:", err.Error())
 			c.Status(fiber.StatusBadRequest)
-			return nil
+			return c.SendString(err.Error())
 		}
 
 		if event.SigningToken != pkToken {
@@ -61,6 +68,9 @@ func run() error {
 
 		demb, err := trans.TranslateEvent(event)
 		fmt.Printf("Translated content: %#v %v\n", demb, err)
+		if err != nil {
+			return err
+		}
 
 		if !(whID == "" || whToken == "") {
 			fmt.Println("Sending WH")
@@ -74,7 +84,7 @@ func run() error {
 		return nil
 	})
 
-	return app.Listen("127.0.0.1:8080")
+	return app.Listen(serverAddress)
 }
 
 func main() {
