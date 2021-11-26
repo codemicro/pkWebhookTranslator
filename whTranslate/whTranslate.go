@@ -15,7 +15,7 @@ type DispatchEvent struct {
 	SigningToken string          `json:"signing_token"` // not used
 	SystemID     string          `json:"system_id"`
 	ID           string          `json:"id,omitempty"`
-	GuildID      string          `json:"guild_id,omitempty"`
+	GuildID      int             `json:"guild_id,omitempty"`
 	Data         json.RawMessage `json:"data,omitempty"`
 }
 
