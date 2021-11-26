@@ -29,7 +29,7 @@ if err != nil {
 }
 ```
 
-See [main.go](main.go) for an example webhook server implementation.
+See [main.go](examples/main.go) for an example webhook server implementation.
 
 ## License
 
