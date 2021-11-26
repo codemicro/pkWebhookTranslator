@@ -10,6 +10,10 @@ import (
 
 var ErrNoType = errors.New("whTranslate: event has no recognised type")
 
+// TranslateEvent translates a PluralKit event into a Discord message embed.
+//
+// PING events and UPDATE_GROUP_MEMBERS events are ignored, and return `nil, nil`. Unregistered events return
+// `nil, ErrNoType`.
 func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmbed, error) {
 
 	if event.Type == "" {
@@ -23,7 +27,6 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 
 	switch event.Type {
 	case EventPing:
-		// TODO: option to send ping webhooks?
 		return nil, nil
 	case EventUpdateSystem:
 		err = t.translateUpdateSystem(event, embed)
@@ -79,7 +82,7 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 	if event.ID != "" {
 		embed.Footer.Text += fmt.Sprintf("\nEntity ID: %s", event.ID)
 	}
-	
+
 	return embed.getMessageEmbed(), nil
 }
 

@@ -45,7 +45,8 @@ func formatStatementMessage(fieldName string, content string) string {
 	return fmt.Sprintf("%s: `%s`\n", fieldName, content)
 }
 
-// snakeToReadable converts a snake_case string to a readable string.
+// snakeToReadable converts a snake_case string to a readable string with the first letter capitalised, and all other
+// letters as they originally were.
 func snakeToReadable(x string) string {
 	y := strings.Split(x, "_")
 	z := strings.Join(y, " ")
