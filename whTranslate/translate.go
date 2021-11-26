@@ -65,8 +65,8 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		embed.Footer.Text += fmt.Sprintf("\nEntity ID: %s", event.ID)
 	}
 
-	if event.GuildID != 0 {
-		embed.Footer.Text += fmt.Sprintf("\nGuild ID: %d", event.GuildID)
+	if event.GuildID != "" {
+		embed.Footer.Text += fmt.Sprintf("\nGuild ID: %s", event.GuildID)
 	}
 
 	return embed.getMessageEmbed(), nil
