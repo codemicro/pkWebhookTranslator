@@ -69,6 +69,7 @@ func run() error {
 		demb, err := trans.TranslateEvent(event)
 		fmt.Printf("Translated content: %#v %v\n", demb, err)
 		if err != nil {
+			c.Status(500)
 			return err
 		}
 
