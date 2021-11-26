@@ -58,6 +58,12 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateUpdateSwitch(event, embed)
 	case EventUpdateSwitchMembers:
 		err = t.translateUpdateSwitchMembers(event, embed)
+	case EventDeleteSwitch:
+		err = t.translateDeleteSwitch(event, embed)
+	case EventDeleteAllSwitches:
+		err = t.translateDeleteAllSwitches(event, embed)
+	case EventSuccessfulImport:
+		err = t.translateImportSuccess(event, embed)
 	default:
 		return nil, ErrNoType
 	}
@@ -401,6 +407,30 @@ func (t *Translator) translateUpdateSwitchMembers(event *DispatchEvent, embed *d
 	embed.setContent(
 		formatStatementMessage("Member IDs", formatStringSlice(data)),
 	)
+
+	return nil
+}
+
+func (t *Translator) translateDeleteSwitch(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Switch deleted")
+	embed.setStyle(actionDelete)
+
+	return nil
+}
+
+func (t *Translator) translateDeleteAllSwitches(event *DispatchEvent, embed *discordEmbed) error {
+
+    embed.setTitle("All switches deleted")
+    embed.setStyle(actionDelete)
+
+    return nil
+}
+
+func (t *Translator) translateImportSuccess(event *DispatchEvent, embed *discordEmbed) error {
+
+	embed.setTitle("Import success")
+	embed.setStyle(actionCreate)
 
 	return nil
 }
