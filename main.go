@@ -49,6 +49,7 @@ func run() error {
 		event := new(whtranslate.DispatchEvent)
 
 		if err := json.Unmarshal(c.Body(), event); err != nil {
+			fmt.Println("Body unmarshal error:", err.Error())
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
