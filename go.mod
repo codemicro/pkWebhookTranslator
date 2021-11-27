@@ -2,13 +2,11 @@ module github.com/codemicro/pkWebhookTranslator
 
 go 1.17
 
-require (
-	github.com/bwmarrin/discordgo v0.23.2
-	github.com/gofiber/fiber/v2 v2.22.0
-)
+require github.com/bwmarrin/discordgo v0.23.2
 
 require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/gofiber/fiber/v2 v2.22.0 // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
