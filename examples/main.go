@@ -4,7 +4,7 @@
  *  pkWebhookTranslate, https://github.com/codemicro/pkWebhookTranslate
  *  Copyright (c) 2021 codemicro and contributors
  *
- *  SPDX-License-Identifier: BSD-2-Clause
+ *  SPDX-License-Identifier: MIT
  */
 
 package main
@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	whtranslate "github.com/codemicro/pkWebhookTranslator/whTranslate"
-	"github.com/gofiber/fiber/v2"
 	"os"
 )
 
