@@ -66,8 +66,6 @@ func (t *Translator) TranslateEvent(event *DispatchEvent) (*discordgo.MessageEmb
 		err = t.translateCreateSwitch(event, embed)
 	case EventUpdateSwitch:
 		err = t.translateUpdateSwitch(event, embed)
-	case EventUpdateSwitchMembers:
-		err = t.translateUpdateSwitchMembers(event, embed)
 	case EventDeleteSwitch:
 		err = t.translateDeleteSwitch(event, embed)
 	case EventDeleteAllSwitches:
@@ -396,24 +394,6 @@ func (t *Translator) translateUpdateSwitch(event *DispatchEvent, embed *discordE
 	}
 
 	embed.setContent(c)
-
-	return nil
-}
-
-func (t *Translator) translateUpdateSwitchMembers(event *DispatchEvent, embed *discordEmbed) error {
-
-	embed.setTitle("Switch members updated")
-	embed.setStyle(actionUpdate)
-
-	var data []string
-
-	if err := json.Unmarshal(event.Data, &data); err != nil {
-		return err
-	}
-
-	embed.setContent(
-		formatStatementMessage("Member IDs", formatStringSlice(data)),
-	)
 
 	return nil
 }
